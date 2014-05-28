@@ -1,0 +1,92 @@
+###############################
+#Programmer : Muhammad Basri
+#email		: muhammadbasri61@gmail.com
+#please report bug to my email
+#:)							
+###############################
+from optparse import OptionParser
+import hashlib
+import md5
+#Permutation Module
+import itertools
+
+class BuntalMD5Crack:
+	def __init__(self):
+		self.Hash=None
+		self.WordList1=None
+		self.WordList2=None
+	def BruteForceAttack(self,Hash,WordList1):
+		self.listOfPasswrod = open(WordList1,'r')
+		self.listPass=self.listOfPasswrod.read().splitlines()
+		for self.listPassword in self.listPass:
+			self.EncryptList = md5.md5(self.listPassword).hexdigest()
+			if Hash == self.EncryptList:
+				print "Hash Found :) : "+"\n"+Hash+"	=	"+self.listPassword
+				break
+			else:
+                                print "Hash Not Found :("
+                else:
+                        quit()
+	def PermutationsAttack(self,Hash,WordList1):
+		self.listOfPasswrod = open(WordList1,'r')
+		self.listPass=self.listOfPasswrod.read().splitlines()
+		for self.listPassword in self.listPass:
+			for self.listPassWord in itertools.permutations(self.listPassword):
+				EncryptList = md5.md5(''.join(self.listPassWord)).hexdigest()
+				if Hash == EncryptList:
+					print "Hash Found :) :"+'\n'+Hash+"	=	"+''.join(self.listPassWord)
+					quit()
+				print "Hash Not Found"
+		else:
+			quit()
+	
+	def CombinationAttack(self,Hash,WordList1):
+		listofPassword=open(WordList1,'r')
+		ListPasswordCom= listofPassword.read().splitlines()
+		for ValueCom in range(len(ListPasswordCom)+1):
+			for ListComPass in itertools.combinations(ListPasswordCom,ValueCom):
+				self.EncryptList = md5.md5(''.join(ListComPass)).hexdigest()
+				if Hash == self.EncryptList:
+							print "Hash Found :)" +Hash+"	=	"+''.join(ListComPass)
+							break
+if __name__ =='__main__':
+	BuntalCrack = BuntalMD5Crack()
+
+	parser = OptionParser()
+	parser.add_option("-B",dest='bruteforce',action='store_false',help="For BruteForce Attack",
+	default=True)
+	parser.add_option("-P",dest='permutations',action='store_false',help="For Permutations Attack",
+	default=True)
+	parser.add_option("-M","--md5",dest='Hash',help="MD5 hash to Crack",metavar="MD5")
+	parser.add_option("-w",dest='WordList',help="file wordlists",metavar="file")
+	parser.add_option('-C',dest='combination',action='store_false',help='For Combination Attack',default = True)
+	
+	try:
+		
+		(options, args) = parser.parse_args()
+		brute= options.bruteforce
+		permutations=options.permutations
+		combinations = options.combination
+		Hash=options.Hash
+		wordlists=options.WordList
+
+		if brute ==False:
+			if not Hash and not wordlists:
+				parser.print_help()
+			else:
+				BuntalCrack.BruteForceAttack(Hash,wordlists)
+		elif permutations==False:
+			if not Hash and not wordlists:
+				parser.print_help()
+			else:
+				BuntalCrack.PermutationsAttack(Hash,wordlists)
+		elif combinations==False:
+			if not Hash and not wordlists:
+				parser.print_help()
+			else:
+				BuntalCrack.CombinationAttack(Hash,wordlists)
+		else:
+			
+			parser.print_help()
+	except:
+		parser.print_help
